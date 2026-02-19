@@ -264,13 +264,6 @@ async def send_copy_safe(context, message, user_id):
         return "failed"
 
 
-    except Exception as e:
-        logging.error(f"Send error {user_id}: {e}")
-        return "failed"
-
-
-
-
 # ================= USERS COUNT =================
 async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
@@ -299,6 +292,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
