@@ -156,7 +156,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if not update.message.reply_to_message:
         await update.message.reply_text("❗ Reply to a message to broadcast.")
-            return
+    return
 
     include_admin = False
     if context.args and context.args[0].lower() == "all":
@@ -300,6 +300,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
