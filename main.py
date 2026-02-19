@@ -265,20 +265,25 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ================= MAIN =================
 def main():
+    init_db()
+
     app = Application.builder().token(BOT_TOKEN).build()
 
+    # ✅ handlers INSIDE main
     app.add_handler(CommandHandler("start", start))
-app.add_handler(CommandHandler("broadcast", broadcast))
-app.add_handler(CommandHandler("users", users_count))
-app.add_handler(ChatJoinRequestHandler(approve_and_send))
+    app.add_handler(CommandHandler("broadcast", broadcast))
+    app.add_handler(CommandHandler("users", users_count))
+    app.add_handler(ChatJoinRequestHandler(approve_and_send))
+    app.add_handler(MessageHandler(filters.ALL, capture_user), group=1)
 
-# ⭐ VERY IMPORTANT — user capture
-app.add_handler(MessageHandler(filters.ALL, capture_user), group=1)
+    app.run_polling(allowed_updates=["message", "chat_join_request"])
+
 
 
 
 if __name__ == "__main__":
     main()
+
 
 
 
