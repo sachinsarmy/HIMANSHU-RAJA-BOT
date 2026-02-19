@@ -1,7 +1,3 @@
-def main():
-    init_db()  # ⭐ VERY IMPORTANT
-
-    app = Application.builder().token(BOT_TOKEN).build()
 import os
 import logging
 import sqlite3
@@ -285,7 +281,9 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ================= MAIN =================
+
 def main():
+    init_db()  # ⭐ database create
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -301,6 +299,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
