@@ -1,10 +1,14 @@
+def main():
+    init_db()  # ⭐ VERY IMPORTANT
+
+    app = Application.builder().token(BOT_TOKEN).build()
 import os
 import logging
 import sqlite3
 import asyncio
 from telegram.ext import MessageHandler, filters
 from telegram import Update
-from db import add_user, get_all_users, remove_user
+from db import add_user, get_all_users, remove_user, init_db
 from telegram.ext import (
     Application,
     ContextTypes,
@@ -297,6 +301,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
