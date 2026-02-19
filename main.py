@@ -12,7 +12,7 @@ from telegram.ext import (
 from telegram.error import Forbidden, BadRequest, TimedOut, NetworkError
 
 # ================= CONFIG =================
-BOT_TOKEN = "8419709904:AAHZj2v9_qwvC8Pw_ksX53EATcSaSTwHSkM"
+BOT_TOKEN = "7539536706:AAHk4mgyqv7AHw9tWHqA7K_5d1qNOgFXPQ8"
 ADMIN_ID = 7849592882
 APK_PATH = "𝗥ᴀᴊᴀ_𝗚ᴀᴍᴇ_𝗣ᴀɴᴇʟ_𝗛ᴀᴄᴋ.apk"
 VOICE_PATH = "VOICEHACK.ogg"
@@ -138,7 +138,6 @@ async def approve_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ================= BROADCAST =================
-# ================= BROADCAST =================
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != ADMIN_ID:
         return
@@ -241,6 +240,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
