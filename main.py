@@ -4,7 +4,7 @@ import sqlite3
 import asyncio
 from telegram.ext import MessageHandler, filters
 from telegram import Update
-from db import add_user, get_all_users, remove_user, init_db
+from db import add_user, get_all_users, remove_user
 from telegram.ext import (
     Application,
     ContextTypes,
@@ -148,15 +148,12 @@ async def approve_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ================= PRO BROADCAST =================
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if include_admin:
-        users = all_users
-    else:
-        users = [u for u in all_users if u not in ADMIN_ID]
-    return
+    if update.effective_user.id != ADMIN_ID:
+        return
 
     if not update.message.reply_to_message:
         await update.message.reply_text("❗ Reply to a message to broadcast.")
-    return
+        return
 
     include_admin = False
     if context.args and context.args[0].lower() == "all":
@@ -164,10 +161,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # ✅ Get users
     all_users = get_all_users()
-    if include_admin:
-        users = all_users
-    else:
-        users = [u for u in all_users if u not in ADMIN_ID]
+    users = [u for u in all_users if include_admin or u != ADMIN_ID]
 
     total_users = len(users)
 
@@ -213,21 +207,17 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 failed += 1
 
-# progress animation
+
+        # progress animation
         if i % 10 == 0 or i == total_users:
             percent = int((i / total_users) * 100)
-          # progress animation
-       try:
-             percent = int(((i + len(batch)) / total_users) * 100)
-           await progress_msg.edit_text(
-                     f"🚀 Broadcasting...\n\n"
-                    f"📊 Progress: {percent}%"
-                                )
-         except Exception:
-             pass
-
-
-        
+            try:
+                await progress_msg.edit_text(
+                    f"""🚀 Broadcasting…\n\n"
+                    f"📊 Progress: {percent}%"""
+                )
+            except Exception:
+                pass
 
 # ✅ live progress update every batch
         try:
@@ -256,7 +246,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     
     
-async def send_copy_safe(context, message, user_id):
+    async def send_copy_safe(context, message, user_id):
     try:
         await message.copy(chat_id=user_id)
         return "ok"
@@ -264,17 +254,27 @@ async def send_copy_safe(context, message, user_id):
     except Forbidden:
         return "blocked"
 
+    except RetryAfter as e:
+        await asyncio.sleep(e.retry_after)
+        try:
+            await message.copy(chat_id=user_id)
+            return "ok"
+        except:
+            return "failed"
+
     except (BadRequest, TimedOut, NetworkError):
         return "failed"
 
     except Exception as e:
-        logging.error(f"Copy error for {user_id}: {e}")
+        logging.error(f"Send error {user_id}: {e}")
         return "failed"
+
+
 
 
 # ================= USERS COUNT =================
 async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id not in ADMIN_ID:
+    if update.effective_user.id != ADMIN_ID:
         return
 
     total = len(get_all_users())
@@ -282,9 +282,7 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 # ================= MAIN =================
-
 def main():
-    init_db()  # ⭐ database create
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -300,15 +298,6 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
-
-
-
-
 
 
 
