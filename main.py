@@ -207,7 +207,16 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 failed += 1
 
-
+# progress animation
+        if i % 10 == 0 or i == total_users:
+            percent = int((i / total_users) * 100)
+            try:
+                await progress_msg.edit_text(
+                    f"""🚀 Broadcasting…\n\n"
+                    f"📊 Progress: {percent}%"""
+                )
+            except Exception:
+                pass
 
 
         
@@ -291,6 +300,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
