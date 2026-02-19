@@ -1,3 +1,4 @@
+
 import os
 import logging
 import sqlite3
@@ -27,6 +28,7 @@ logging.basicConfig(
     format="%(asctime)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
+
 
 # ================= DATABASE =================
 def get_conn():
@@ -68,6 +70,7 @@ def remove_user(user_id: int):
             conn.commit()
     except Exception as e:
         logging.error(f"Remove user error: {e}")
+
 
 # ================= COMMON SEND =================
 async def send_welcome_package(user, context: ContextTypes.DEFAULT_TYPE):
@@ -129,8 +132,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     logging.info(f"User added: {user.id}")
 
     await send_welcome_package(user, context)
-    
+
     # ✅ STEP 1 — ADD HERE
+
+
 async def capture_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     if user:
@@ -145,6 +150,7 @@ async def approve_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = request.from_user
     await send_welcome_package(user, context)
+
 
 # ================= PRO BROADCAST =================
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -182,16 +188,12 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     DELAY = 1.2  # seconds between batches
 
     for i in range(0, total_users, BATCH_SIZE):
-        batch = users[i:i + BATCH_SIZE]
+        batch = users[i : i + BATCH_SIZE]
 
         tasks = []
         for user_id in batch:
             tasks.append(
-                send_copy_safe(
-                    context,
-                    update.message.reply_to_message,
-                    user_id
-                )
+                send_copy_safe(context, update.message.reply_to_message, user_id)
             )
 
         results = await asyncio.gather(*tasks)
@@ -207,7 +209,6 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
             else:
                 failed += 1
 
-
         # progress animation
         if i % 10 == 0 or i == total_users:
             percent = int((i / total_users) * 100)
@@ -219,7 +220,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
             except Exception:
                 pass
 
-# ✅ live progress update every batch
+        # ✅ live progress update every batch
         try:
             await progress_msg.edit_text(
                 f"🚀 Broadcasting...\n\n"
@@ -241,10 +242,8 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
         f"❌ Failed: {failed}\n"
         f"🗑 Removed: {removed}"
     )
-    
-    
-    
-    
+
+
 async def send_copy_safe(context, message, user_id):
     try:
         await message.copy(chat_id=user_id)
@@ -267,7 +266,6 @@ async def send_copy_safe(context, message, user_id):
     except Exception as e:
         logging.error(f"Copy error for {user_id}: {e}")
         return "failed"
-
 
 
 # ================= USERS COUNT =================
@@ -296,9 +294,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
-
 
