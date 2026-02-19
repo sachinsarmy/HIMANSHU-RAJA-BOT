@@ -1,4 +1,3 @@
-
 import os
 import logging
 import sqlite3
@@ -280,6 +279,7 @@ app.add_handler(MessageHandler(filters.ALL, capture_user), group=1)
 
 if __name__ == "__main__":
     main()
+
 
 
 
