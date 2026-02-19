@@ -1,3 +1,4 @@
+
 import os
 import logging
 import sqlite3
@@ -132,7 +133,6 @@ async def capture_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     if user:
         add_user(user.id)
-
 
 
 # ================= JOIN REQUEST =================
@@ -279,13 +279,6 @@ def main():
     app.run_polling(allowed_updates=["message", "chat_join_request"])
 
 
-
-
 if __name__ == "__main__":
     main()
-
-
-
-
-
 
