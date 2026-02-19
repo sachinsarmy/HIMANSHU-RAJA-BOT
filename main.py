@@ -248,7 +248,7 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     
     
-    async def send_copy_safe(context, message, user_id):
+async def send_copy_safe(context, message, user_id):
     try:
         await message.copy(chat_id=user_id)
         return "ok"
@@ -256,16 +256,13 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Forbidden:
         return "blocked"
 
-    except RetryAfter as e:
-        await asyncio.sleep(e.retry_after)
-        try:
-            await message.copy(chat_id=user_id)
-            return "ok"
-        except:
-            return "failed"
-
     except (BadRequest, TimedOut, NetworkError):
         return "failed"
+
+    except Exception as e:
+        logging.error(f"Copy error for {user_id}: {e}")
+        return "failed"
+
 
     except Exception as e:
         logging.error(f"Send error {user_id}: {e}")
@@ -300,6 +297,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
