@@ -126,20 +126,14 @@ https://t.me/rajaindiaprediction/56
 
 
 # ================= /START =================
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    add_user(user.id)
-    logging.info(f"User added: {user.id}")
-
-    await send_welcome_package(user, context)
-
-    # ✅ STEP 1 — ADD HERE
-
-
 async def capture_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if update.effective_chat.type != "private":
+        return
+
     user = update.effective_user
     if user:
         add_user(user.id)
+
 
 
 # ================= JOIN REQUEST =================
@@ -275,17 +269,17 @@ def main():
     app = Application.builder().token(BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("broadcast", broadcast))
-    app.add_handler(CommandHandler("users", users_count))
-    app.add_handler(ChatJoinRequestHandler(approve_and_send))
+app.add_handler(CommandHandler("broadcast", broadcast))
+app.add_handler(CommandHandler("users", users_count))
+app.add_handler(ChatJoinRequestHandler(approve_and_send))
 
-    # ✅ AUTO USER CAPTURE — ALWAYS LAST
-    app.add_handler(MessageHandler(filters.ALL, capture_user))
+# ⭐ VERY IMPORTANT — user capture
+app.add_handler(MessageHandler(filters.ALL, capture_user), group=1)
 
-    app.run_polling(allowed_updates=["message", "chat_join_request"])
 
 
 if __name__ == "__main__":
     main()
+
 
 
