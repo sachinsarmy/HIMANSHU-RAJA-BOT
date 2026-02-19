@@ -148,12 +148,15 @@ async def approve_and_send(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ================= PRO BROADCAST =================
 async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != ADMIN_ID:
-        return
+    if include_admin:
+        users = all_users
+    else:
+        users = [u for u in all_users if u not in ADMIN_ID]
+    return
 
     if not update.message.reply_to_message:
         await update.message.reply_text("❗ Reply to a message to broadcast.")
-        return
+            return
 
     include_admin = False
     if context.args and context.args[0].lower() == "all":
@@ -161,7 +164,10 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # ✅ Get users
     all_users = get_all_users()
-    users = [u for u in all_users if include_admin or u != ADMIN_ID]
+    if include_admin:
+        users = all_users
+    else:
+        users = [u for u in all_users if u not in ADMIN_ID]
 
     total_users = len(users)
 
@@ -210,13 +216,15 @@ async def broadcast(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # progress animation
         if i % 10 == 0 or i == total_users:
             percent = int((i / total_users) * 100)
-            try:
-                await progress_msg.edit_text(
-                    f"""🚀 Broadcasting…\n\n"
-                    f"📊 Progress: {percent}%"""
-                )
-            except Exception:
-                pass
+          # progress animation
+                        try:
+                            percent = int(((i + len(batch)) / total_users) * 100)
+                        await progress_msg.edit_text(
+                                f"🚀 Broadcasting...\n\n"
+                        f"📊 Progress: {percent}%"
+                                )
+                            except Exception:
+                        pass
 
 
         
@@ -266,7 +274,7 @@ async def send_copy_safe(context, message, user_id):
 
 # ================= USERS COUNT =================
 async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if update.effective_user.id != ADMIN_ID:
+    if update.effective_user.id not in ADMIN_ID:
         return
 
     total = len(get_all_users())
@@ -292,6 +300,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
