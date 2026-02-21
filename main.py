@@ -28,9 +28,7 @@ logging.basicConfig(
 # ================= DATABASE =================
 conn = sqlite3.connect(DB_NAME, check_same_thread=False)
 cursor = conn.cursor()
-cursor.execute(
-    "CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY)"
-)
+cursor.execute("CREATE TABLE IF NOT EXISTS users (user_id INTEGER PRIMARY KEY)")
 conn.commit()
 
 
@@ -205,6 +203,7 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total = len(get_all_users())
     await update.message.reply_text(f"👥 Total Users: {total}")
 
+
 async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
 
@@ -215,6 +214,8 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     add_user(user.id)
 
     # Optional: confirm activation only once
+
+
 async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     message = update.message
@@ -237,7 +238,7 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
         try:
             await context.bot.send_message(
                 chat_id=admin_id,
-                text=f"✅ Access Activated Successfully!\n\nUser ID: {user_id}\nUsername: @{user.username}"
+                text=f"✅ Access Activated Successfully!\n\nUser ID: {user_id}\nUsername: @{user.username}",
             )
         except:
             pass
@@ -248,7 +249,6 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     except:
         pass
 
-    
     # Send your injector / welcome package
     await send_welcome_package(user.id, context)
 
@@ -261,12 +261,11 @@ def main():
     app.add_handler(CommandHandler("broadcast", broadcast))
     app.add_handler(CommandHandler("users", users_count))
     app.add_handler(ChatJoinRequestHandler(approve_and_send))
-    app.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, capture_user_message))
+    app.add_handler(
+        MessageHandler(filters.ALL & ~filters.COMMAND, capture_user_message)
+    )
     app.run_polling(allowed_updates=["message", "chat_join_request"])
-    
 
 
 if __name__ == "__main__":
     main()
-
-
