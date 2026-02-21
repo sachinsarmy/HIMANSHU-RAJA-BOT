@@ -204,14 +204,7 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(f"👥 Total Users: {total}")
 
 
-async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
 
-    if not user:
-        return
-
-    # Save user to DB
-    add_user(user.id)
 
     # Optional: confirm activation only once
 
@@ -223,12 +216,15 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     if not user or not message:
         return
 
+     # Save user to DB
+    add_user(user.id)
+
     # Prevent bot loop
     if message.from_user.is_bot:
         return
 
     user_id = user.id
-    admin_id = YOUR_ADMIN_ID  # make sure this is defined at top
+    admin_id = ADMIN_ID  # make sure this is defined at top
 
     # Check if user exists in DB
     if not user_exists(user_id):
@@ -269,3 +265,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
