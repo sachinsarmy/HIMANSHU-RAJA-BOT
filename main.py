@@ -237,7 +237,6 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
     user_id = user.id
 
-    
     # If user not in DB → add & notify admin
     if not user_exists(user_id):
         add_user(user_id)
@@ -251,13 +250,13 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
             pass
 
     # Echo same message back to user
+
     if user_id != ADMIN_ID:
-      try:
-           await update.message.copy(chat_id=user_id)
-     except Exception:
-        pass
+        try:
+            await update.message.copy(chat_id=user_id)
+        except Exception:
+            pass
     # Send your injector / welcome package
-    
 
 
 # ================= MAIN =================
@@ -288,6 +287,3 @@ def user_exists(user_id: int):
 
 if __name__ == "__main__":
     main()
-
-
-
