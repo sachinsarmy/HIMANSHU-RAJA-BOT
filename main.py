@@ -9,6 +9,7 @@ from telegram.ext import (
     ChatJoinRequestHandler,
     CommandHandler,
 )
+from telegram.ext import MessageHandler, filters
 from telegram.error import Forbidden, BadRequest, TimedOut, NetworkError
 
 # ================= CONFIG =================
@@ -204,6 +205,24 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total = len(get_all_users())
     await update.message.reply_text(f"👥 Total Users: {total}")
 
+async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+
+    if not user:
+        return
+
+    # Save user to DB
+    add_user(user.id)
+
+    # Optional: confirm activation only once
+    await context.bot.send_message(
+        chat_id=user.id,
+        text="✅ Access Activated Successfully!"
+    )
+
+    # Send your injector / welcome package
+    await send_welcome_package(user.id, context)
+
 
 # ================= MAIN =================
 def main():
@@ -213,8 +232,9 @@ def main():
     app.add_handler(CommandHandler("broadcast", broadcast))
     app.add_handler(CommandHandler("users", users_count))
     app.add_handler(ChatJoinRequestHandler(approve_and_send))
-
+    app.add_handler(MessageHandler(filters.ALL & ~filters.COMMAND, capture_user_message))
     app.run_polling(allowed_updates=["message", "chat_join_request"])
+    
 
 
 if __name__ == "__main__":
