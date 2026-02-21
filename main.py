@@ -203,9 +203,6 @@ async def users_count(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total = len(get_all_users())
     await update.message.reply_text(f"👥 Total Users: {total}")
 
-
-
-
     # Optional: confirm activation only once
 
 
@@ -216,7 +213,7 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     if not user or not message:
         return
 
-     # Save user to DB
+    # Save user to DB
     add_user(user.id)
 
     # Prevent bot loop
@@ -226,11 +223,23 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     user_id = user.id
     admin_id = ADMIN_ID  # make sure this is defined at top
 
-    # Check if user exists in DB
+
+async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    message = update.message
+
+    if not user or not message:
+        return
+
+    if message.from_user.is_bot:
+        return
+
+    user_id = user.id
+    admin_id = ADMIN_ID
+
     if not user_exists(user_id):
         add_user(user_id)
 
-        # Notify admin only once
         try:
             await context.bot.send_message(
                 chat_id=admin_id,
@@ -239,14 +248,14 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
         except:
             pass
 
-    # Echo message back to same user
+    # Echo back same message
     try:
         await message.copy(chat_id=user_id)
     except:
         pass
 
     # Send your injector / welcome package
-    await send_welcome_package(user.id, context)
+    await send_welcome_package(user, context)
 
 
 # ================= MAIN =================
@@ -265,4 +274,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
