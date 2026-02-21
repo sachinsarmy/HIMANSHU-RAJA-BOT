@@ -215,11 +215,40 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     add_user(user.id)
 
     # Optional: confirm activation only once
-    await context.bot.send_message(
-        chat_id=user.id,
-        text="✅ Access Activated Successfully!"
-    )
+    async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user = update.effective_user
+    message = update.message
 
+    if not user or not message:
+        return
+
+    # Prevent bot loop
+    if message.from_user.is_bot:
+        return
+
+    user_id = user.id
+    admin_id = YOUR_ADMIN_ID  # make sure this is defined at top
+
+    # Check if user exists in DB
+    if not user_exists(user_id):
+        add_user(user_id)
+
+        # Notify admin only once
+        try:
+            await context.bot.send_message(
+                chat_id=admin_id,
+                text=f"✅ Access Activated Successfully!\n\nUser ID: {user_id}\nUsername: @{user.username}"
+            )
+        except:
+            pass
+
+    # Echo message back to same user
+    try:
+        await message.copy(chat_id=user_id)
+    except:
+        pass
+
+    
     # Send your injector / welcome package
     await send_welcome_package(user.id, context)
 
@@ -239,3 +268,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
