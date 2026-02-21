@@ -215,7 +215,7 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
     add_user(user.id)
 
     # Optional: confirm activation only once
-    async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     message = update.message
 
@@ -268,4 +268,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
