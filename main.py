@@ -237,6 +237,11 @@ async def capture_user_message(update: Update, context: ContextTypes.DEFAULT_TYP
 
     user_id = user.id
 
+    
+    # 🚫 STOP if admin
+    if user_id == ADMIN_ID:
+        return
+
     # If user not in DB → add & notify admin
     if not user_exists(user_id):
         add_user(user_id)
@@ -287,4 +292,5 @@ def user_exists(user_id: int):
 
 if __name__ == "__main__":
     main()
+
 
